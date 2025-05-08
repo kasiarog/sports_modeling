@@ -1,0 +1,2 @@
+Pomysły na wzorce projektowe:
+ - 
