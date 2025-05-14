@@ -62,11 +62,11 @@ export class ResultDependentEvent<T> implements Event, Subject {
   getDescription(): string {
     return this.description;
   }
+  getContestant(): string {
+    return this.contestant; //returning the contestant who scored points
+  }
   //end of Event interface
   getPoint(): number {
     return this.point;
-  }
-  getContestant(): string {
-    return this.contestant; //returning the contestant who scored points
   }
 }

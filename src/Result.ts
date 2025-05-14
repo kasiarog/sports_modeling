@@ -2,14 +2,14 @@ import { ResultDependentEvent } from "./Event/ResultDependentEvent";
 import { Observer, Subject } from "./patternsInterface/Observer";
 
 export class Result implements Observer {
-  private events: string[] = [];
+    private resultEvents: ResultDependentEvent<any>[] = [];
   private points: { [contestant: string]: number } = {};
   constructor(private name: string) {}
 
   update<T>(subject: ResultDependentEvent<T>): void {
     const eventDetails = `Event: ${subject.getName()} at ${subject.getDate()} - Points: ${subject.getPoint()}`;
 
-    this.events.push(eventDetails);
+    this.resultEvents.push(subject);
     const contestant = subject.getContestant();
     const result = subject.getPoint();
 
@@ -19,8 +19,8 @@ export class Result implements Observer {
     }
     this.points[contestant] += result;
   }
-  getEventTab(): string[] {
-    return this.events;
+  getResultEvents(): ResultDependentEvent<any>[] {
+    return this.resultEvents;
   }
 
   getCurrentResult():void {
@@ -30,4 +30,5 @@ export class Result implements Observer {
       );
     }
   }
+ 
 }

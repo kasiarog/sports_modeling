@@ -30,6 +30,6 @@ const penaltyEvent = EventFactory.createEvent(
   resultObserver
 );
 
-console.log("\nEvent Tab:", resultObserver.getEventTab());
+console.log("\nEvent Tab:", resultObserver.getResultEvents());
 console.log("\nCurrent Score:");
 resultObserver.getCurrentResult();
