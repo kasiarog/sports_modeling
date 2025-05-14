@@ -1,3 +1,8 @@
+Run index.ts 
+```
+ ts-node src/index.ts
+```
+
 Pomysły na wzorce projektowe:
 
 - Factory odpowiada za tworzenie instancji zdarzeń w jednolity sposób, co ułatwia zarządzanie ich tworzeniem i pozwala na dostowowywanie logiki inicjalizacji (np. automatyczne dodawanie obserwatorów).
