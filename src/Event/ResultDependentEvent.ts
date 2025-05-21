@@ -1,22 +1,24 @@
 import { Event } from "../interfaces/Event";
 import { Observer, Subject } from "../patternsInterface/Observer";
+import { Contestant } from "../Contestant";
 
 export class ResultDependentEvent<T> implements Event, Subject {
   name: string;
   date: Date;
   description: string;
   point: number;
-  contestant: string;
+  contestant: Contestant;
+  opponent: Contestant;
 
   private observers: Observer[] = [];
 
-  //constructor
   constructor(
     name: string,
     date: Date,
     description: string,
     point: number,
-    contestant: string,
+    contestant: Contestant,
+    opponent: Contestant,
     observer: Observer
   ) {
     this.name = name;
@@ -24,10 +26,11 @@ export class ResultDependentEvent<T> implements Event, Subject {
     this.description = description;
     this.point = point;
     this.contestant = contestant;
+    this.opponent = opponent;
     this.addObserver(observer);
     this.notifyObservers();
   }
-  //implementing Observer interface
+
   addObserver(observer: Observer): void {
     this.observers.push(observer);
   }
@@ -41,16 +44,14 @@ export class ResultDependentEvent<T> implements Event, Subject {
       observer.update(this);
     }
   }
+
   trigger(): void {
     console.log(
-      `Event triggered: ${this.getName()} at ${this.getDate()} by ${
-        this.contestant
-      }`
+      `Event triggered: ${this.name} at ${this.date} by ${this.contestant.getTeamName()}`
     );
     this.notifyObservers();
   }
 
-  //implementing Event interface
   getName(): string {
     return this.name;
   }
@@ -62,10 +63,15 @@ export class ResultDependentEvent<T> implements Event, Subject {
   getDescription(): string {
     return this.description;
   }
-  getContestant(): string {
-    return this.contestant; //returning the contestant who scored points
+
+  getContestant(): Contestant {
+    return this.contestant;
   }
-  //end of Event interface
+
+  getOpponent(): Contestant {
+    return this.opponent;
+  }
+
   getPoint(): number {
     return this.point;
   }

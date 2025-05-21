@@ -1,5 +1,6 @@
-import { Result } from "../Result";
 import { ResultDependentEvent } from "./ResultDependentEvent";
+import { Contestant } from "../Contestant";
+import { Result } from "../interfaces/Result";
 
 export class EventFactory {
   static createEvent(
@@ -7,7 +8,8 @@ export class EventFactory {
     date: Date,
     description: string,
     point: number,
-    contestant: string,
+    contestant: Contestant,
+    opponent: Contestant,
     observer: Result
   ): ResultDependentEvent<any> {
     return new ResultDependentEvent(
@@ -16,6 +18,7 @@ export class EventFactory {
       description,
       point,
       contestant,
+      opponent,
       observer
     );
   }

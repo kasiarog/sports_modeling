@@ -1,11 +1,13 @@
+import { Contestant } from "../Contestant";
+
 export class Event {
     name: string;
     date: Date;
     description: string;
-    contestant: string;
+    contestant: Contestant;
     points?: number;
 
-    constructor(name: string, date: Date, description: string,contestant: string, points?: number) {
+    constructor(name: string, date: Date, description: string, contestant: Contestant, points?: number) {
         this.name = name;
         this.date = date;
         this.description = description;
@@ -22,7 +24,7 @@ export class Event {
     getDescription(): string {
         return this.description;
     }
-    getContestant(): string {
+    getContestant(): Contestant {
         return this.contestant;
     }
     getPoint(): number {
