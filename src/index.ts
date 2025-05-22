@@ -47,9 +47,9 @@ switch (discipline) {
       "Point Won",
       new Date(),
       "Player scored a point",
-      3,
       contestantA,
       contestantB,
+      3,
       resultObserver
     );
 
@@ -57,9 +57,9 @@ switch (discipline) {
       "Point Won",
       new Date(),
       "Another point is scored",
+      contestantB,
+      contestantA,
       2,
-      contestantB,
-      contestantA,
       resultObserver
     );
 
@@ -67,9 +67,10 @@ switch (discipline) {
       "Point Won",
       new Date(),
       "Another point is scored",
+
+      contestantB,
+      contestantA,
       20,
-      contestantB,
-      contestantA,
       resultObserver
     );
 
@@ -77,9 +78,10 @@ switch (discipline) {
       "Point Won",
       new Date(),
       "Another point is scored",
+
+      contestantA,
+      contestantB,
       3,
-      contestantA,
-      contestantB,
       resultObserver
     );
 
@@ -87,9 +89,10 @@ switch (discipline) {
       "Point Won",
       new Date(),
       "Another point is scored",
-      1,
+
       contestantB,
       contestantA,
+      1,
       resultObserver
     );
 
@@ -97,15 +100,16 @@ switch (discipline) {
     console.log("\nCurrent Score:");
     resultObserver.getCurrentResult();
     break;
-  
+
   case "soccer":
     EventFactory.createEvent(
       "Goal scored",
       new Date(),
       "Player scored a goal",
-      1,
+
       contestantA,
       contestantB,
+      1,
       resultObserver
     );
 
@@ -113,9 +117,10 @@ switch (discipline) {
       "Three goal scored",
       new Date(),
       "Another point is scored",
-      3,
+
       contestantB,
       contestantA,
+      3,
       resultObserver
     );
 
@@ -123,9 +128,10 @@ switch (discipline) {
       "penalty",
       new Date(),
       "Penalty for team A",
-      1,
+
       contestantA,
       contestantB,
+      1,
       resultObserver
     );
 
@@ -133,9 +139,10 @@ switch (discipline) {
       "own goal",
       new Date(),
       "Own goal by a team A",
-      1,
+
       contestantA,
       contestantB,
+      1,
       resultObserver
     );
 
@@ -143,51 +150,55 @@ switch (discipline) {
     console.log("\nCurrent Score:");
     resultObserver.getCurrentResult();
     break;
-  
+
   case "tennis":
     EventFactory.createEvent(
       "Three points Won",
       new Date(),
       "Player A wins point",
-      3,
+
       contestantA,
       contestantB,
+      3,
       resultObserver
     );
     EventFactory.createEvent(
       "Point Won",
       new Date(),
       "Player B wins point",
-      1,
+
       contestantB,
       contestantA,
+      1,
       resultObserver
     );
     EventFactory.createEvent(
       "Point Won",
       new Date(),
       "Player A wins point",
-      1,
+
       contestantA,
       contestantB,
+      1,
       resultObserver
     );
     EventFactory.createEvent(
       "Point Won",
       new Date(),
       "Player A wins point",
+
+      contestantA,
+      contestantB,
       3,
-      contestantA,
-      contestantB,
       resultObserver
     );
     EventFactory.createEvent(
       "Point Won",
       new Date(),
       "Player B wins point",
+      contestantB,
+      contestantA,
       2,
-      contestantB,
-      contestantA,
       resultObserver
     );
 
