@@ -1,4 +1,5 @@
 import { ResultDependentEvent } from "./ResultDependentEvent";
+import { HistoryEvent } from "./HistoryEvent";
 import { Contestant } from "../Contestant";
 import { Result } from "../interfaces/Result";
 
@@ -7,19 +8,29 @@ export class EventFactory {
     name: string,
     date: Date,
     description: string,
-    point: number,
     contestant: Contestant,
     opponent: Contestant,
-    observer: Result
-  ): ResultDependentEvent<any> {
-    return new ResultDependentEvent(
-      name,
-      date,
-      description,
-      point,
-      contestant,
-      opponent,
-      observer
-    );
+    point?: number,
+    observer?: Result
+  ): ResultDependentEvent<any> | HistoryEvent {
+    if (point !== undefined && observer !== undefined) {
+      return new ResultDependentEvent(
+        name,
+        date,
+        description,
+        point,
+        contestant,
+        opponent,
+        observer
+      );
+    } else {
+      return new HistoryEvent(
+        name,
+        date,
+        description,
+        contestant,
+        opponent
+      );
+    }
   }
 }

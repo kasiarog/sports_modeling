@@ -5,13 +5,15 @@ export class Event {
     date: Date;
     description: string;
     contestant: Contestant;
+    opponent: Contestant;
     points?: number;
 
-    constructor(name: string, date: Date, description: string, contestant: Contestant, points?: number) {
+    constructor(name: string, date: Date, description: string, contestant: Contestant, opponent: Contestant, points?: number) {
         this.name = name;
         this.date = date;
         this.description = description;
         this.contestant = contestant;
+        this.opponent = opponent;
         this.points = points;
     }
 
@@ -26,6 +28,9 @@ export class Event {
     }
     getContestant(): Contestant {
         return this.contestant;
+    }
+    getOpponent(): Contestant {
+        return this.opponent;
     }
     getPoint(): number {
         return this.points ? this.points : 0;
