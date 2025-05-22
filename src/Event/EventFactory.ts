@@ -12,9 +12,9 @@ export class EventFactory {
     opponent: Contestant,
     point?: number,
     observer?: Result
-  ): ResultDependentEvent<any> | HistoryEvent {
+  ): ResultDependentEvent<Result> | HistoryEvent {
     if (point !== undefined && observer !== undefined) {
-      return new ResultDependentEvent(
+      return new ResultDependentEvent<Result>(
         name,
         date,
         description,

@@ -1,5 +1,5 @@
 import { Event } from "./interfaces/Event";
-export class History {
+export class History {//add observer for history events
   private events: Event[] = [];
 
   constructor(historyEvents: Event[], resultEvents: Event[]) {
