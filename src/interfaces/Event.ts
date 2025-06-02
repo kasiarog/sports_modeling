@@ -4,8 +4,8 @@ export class Event {
     name: string;
     date: Date;
     description: string;
-    contestant: Contestant;
-    opponent: Contestant;
+    contestant?: Contestant;
+    opponent?: Contestant;
     points?: number;
 
     constructor(name: string, date: Date, description: string, contestant: Contestant, opponent: Contestant, points?: number) {
@@ -26,10 +26,10 @@ export class Event {
     getDescription(): string {
         return this.description;
     }
-    getContestant(): Contestant {
+    getContestant(): Contestant | undefined {
         return this.contestant;
     }
-    getOpponent(): Contestant {
+    getOpponent(): Contestant | undefined {
         return this.opponent;
     }
     getPoint(): number {
