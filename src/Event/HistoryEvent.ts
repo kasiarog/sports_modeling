@@ -4,15 +4,15 @@ export class HistoryEvent implements Event {
   name: string;
   date: Date;
   description: string;
-  contestant: Contestant;
-  opponent: Contestant;
+  contestant?: Contestant;
+  opponent?: Contestant;
 
   constructor(
     name: string,
     date: Date,
     description: string,
-    contestant: Contestant,
-    opponent: Contestant
+    contestant?: Contestant,
+    opponent?: Contestant
   ) {
     this.name = name;
     this.date = date;
@@ -33,11 +33,11 @@ export class HistoryEvent implements Event {
     return this.description;
   }
 
-  getContestant(): Contestant {
+  getContestant(): Contestant | undefined {
     return this.contestant;
   }
 
-  getOpponent(): Contestant {
+  getOpponent(): Contestant | undefined {
     return this.opponent;
   }
   
