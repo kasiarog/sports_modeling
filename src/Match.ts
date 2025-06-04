@@ -1,6 +1,7 @@
 import { Contestant } from "./Contestant";
 import { Event } from "./interfaces/Event";
 import { Result } from "./interfaces/Result";
+import { History } from "./History";
 
 export class Match {
   private date: Date;
@@ -8,6 +9,7 @@ export class Match {
   private contestantB: Contestant;
   private observer: Result;
   private events: Event[] = [];
+  private matchHistory: History= new History();
 
   constructor(
     date: Date,
@@ -38,44 +40,18 @@ export class Match {
   }
 
   addEvent(event: Event): void {
-    this.events.push(event);
+    this.matchHistory.addEvent(event);
   }
 
   getEvents(): Event[] {
-    return this.events;
+    return this.matchHistory.getEvents();
   }
 
-  listEvents(): void {
-    if (this.events.length === 0) {
-      console.log("No events recorded.");
-      return;
-    }
-
-    this.events.forEach((event, index) => {
-      const contestantName = event.getContestant()?.getTeamName();
-      const opponentName = event.getOpponent()?.getTeamName();
-      const points = event.getPoint();
-      const pointInfo = points > 0 ? ` | Points: ${points}` : "";
-
-      if (contestantName && opponentName) {
-        console.log(
-          `${index + 1}. [${event
-            .getDate()
-            .toLocaleString()}] ${event.getName()} - ${event.getDescription()} | Contestant: ${contestantName} vs ${opponentName}${pointInfo}`
-        );
-      } else {
-        console.log(
-          `${index + 1}. [${event
-            .getDate()
-            .toLocaleString()}] ${event.getName()} - ${event.getDescription()}`
-        );
-      }
-    });
-  }
+  
 
   printScoreboard(): void {
     console.log("\n--- All Match Events ---");
-    this.listEvents();
+    this.matchHistory.printHistory();
     console.log("\n--- Current Score ---");
     this.observer.getCurrentResult();
   }
