@@ -8,7 +8,6 @@ export class Match {
   private contestantA: Contestant;
   private contestantB: Contestant;
   private observer: Result;
-  private events: Event[] = [];
   private matchHistory: History= new History();
 
   constructor(
