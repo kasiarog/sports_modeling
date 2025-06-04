@@ -3,7 +3,9 @@ import { ScoringStrategy } from "../patternsInterface/ScoringStrategy";
 
 export class TennisResult implements ScoringStrategy {
   private resultEvents: ResultDependentEvent<any>[] = [];
-  private score: { [contestant: string]: { sets: number; games: number; points: number } } = {};
+  private score: {
+    [contestant: string]: { sets: number; games: number; points: number };
+  } = {};
   private matchEnded: boolean = false;
 
   private pointsMap = [0, 15, 30, 40];
@@ -53,7 +55,10 @@ export class TennisResult implements ScoringStrategy {
     this.score[contestant].points = 0;
     this.score[opponent].points = 0;
 
-    if (this.score[contestant].games >= 6 && this.score[contestant].games - this.score[opponent].games >= 2) {
+    if (
+      this.score[contestant].games >= 6 &&
+      this.score[contestant].games - this.score[opponent].games >= 2
+    ) {
       this.score[contestant].sets += 1;
       this.score[contestant].games = 0;
       this.score[opponent].games = 0;
@@ -66,10 +71,13 @@ export class TennisResult implements ScoringStrategy {
   }
 
   getCurrentScore(): any {
-    const readableScore: { [id: string]: { sets: number; games: number; points: string } } = {};
+    const readableScore: {
+      [id: string]: { sets: number; games: number; points: string };
+    } = {};
     for (const id in this.score) {
       const pts = this.score[id].points;
-      const readablePts = pts > 3 ? (pts === 4 ? "Ad" : "??") : this.pointsMap[pts];
+      const readablePts =
+        pts > 3 ? (pts === 4 ? "Ad" : "??") : this.pointsMap[pts];
       readableScore[id] = {
         sets: this.score[id].sets,
         games: this.score[id].games,
@@ -85,12 +93,28 @@ export class TennisResult implements ScoringStrategy {
 
   getCurrentResult(): void {
     for (const contestant in this.score) {
-      const readablePts = this.score[contestant].points > 3
-        ? (this.score[contestant].points === 4 ? "Ad" : "??")
-        : this.pointsMap[this.score[contestant].points];
+      const readablePts =
+        this.score[contestant].points > 3
+          ? this.score[contestant].points === 4
+            ? "Ad"
+            : "??"
+          : this.pointsMap[this.score[contestant].points];
       console.log(
         `Contestant: ${contestant} - Sets: ${this.score[contestant].sets}, Games: ${this.score[contestant].games}, Points: ${readablePts}`
       );
     }
+  }
+
+  isMatchOver(): boolean {
+    return this.matchEnded;
+  }
+
+  getWinnerId(contestantAId: string, contestantBId: string): string | null {
+    if (this.matchEnded) {
+      return this.score[contestantAId].sets > this.score[contestantBId].sets
+        ? contestantAId
+        : contestantBId;
+    }
+    return null;
   }
 }

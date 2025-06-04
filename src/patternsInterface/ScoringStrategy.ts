@@ -5,4 +5,6 @@ export interface ScoringStrategy {
   getCurrentScore(): any;
   getResultEvents(): ResultDependentEvent<any>[];
   getCurrentResult(): void;
+  isMatchOver(): boolean;
+  getWinnerId(contestantAId: string, contestantBId: string): string | null;
 }

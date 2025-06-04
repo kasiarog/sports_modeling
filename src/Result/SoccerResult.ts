@@ -48,14 +48,31 @@ export class SoccerResult implements ScoringStrategy {
   }
 
   getCurrentResult(): void {
-    var scores: number[] = []
+    var scores: number[] = [];
     for (const contestant in this.score) {
       console.log(`Contestant: ${contestant}`);
       console.log(`  Goals: ${this.goals[contestant]}`);
       console.log(`  Penalties: ${this.penalties[contestant]}`);
       console.log(`  Own Goals: ${this.ownGoals[contestant]}`);
-      scores.push(this.score[contestant])
+      scores.push(this.score[contestant]);
     }
-    console.log(`Final score: ${scores[0]}:${scores[1]}`)
+    console.log(`Final score: ${scores[0]}:${scores[1]}`);
+  }
+
+  isMatchOver(): boolean {
+    return false;
+  }
+
+  getWinnerId(contestantAId: string, contestantBId: string): string | null {
+    const scoreA = this.score[contestantAId] || 0;
+    const scoreB = this.score[contestantBId] || 0;
+
+    if (scoreA > scoreB) {
+      return contestantAId;
+    } else if (scoreB > scoreA) {
+      return contestantBId;
+    } else {
+      return null; // It's a draw
+    }
   }
 }
