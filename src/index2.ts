@@ -1,16 +1,15 @@
-// index.ts (Conceptual - adapt to your full setup)
 import { Player } from "./Player";
 import { Contestant } from "./Contestant";
-import { Tournament, ManagedMatch } from "./Tournament"; // Import ManagedMatch
+import { Tournament, ManagedMatch } from "./Tournament";
 import { GroupPhase } from "./Phase/GroupPhase";
 import { LadderPhase } from "./Phase/LadderPhase";
 import { Result } from "./interfaces/Result";
 import { BadmintonResult } from "./Result/BadmintonResult";
 import { SoccerResult } from "./Result/SoccerResult";
 import { TennisResult } from "./Result/TennisResult";
-import { EventFactory } from "./Event/EventFactory"; // For simulating game events
+import { EventFactory } from "./Event/EventFactory";
 import { Match } from "./Match";
-import { ScoringStrategy } from "./patternsInterface/ScoringStrategy"; // For type hint
+import { ScoringStrategy } from "./patternsInterface/ScoringStrategy";
 
 function simulateBadmintonMatchEvents(
   matchObject: Match,
@@ -126,31 +125,8 @@ async function runTournamentSimulation() {
   const teamC = new Contestant("TC", "Team Charlie", [p5, p6]);
   const teamD = new Contestant("TD", "Team Delta", [p7, p8]);
 
-  // --- Choose Discipline and Scoring Strategy ---
-  var discipline = "badminton";
-  let scoringStrategy;
-
-  switch (discipline) {
-    case "badminton":
-      scoringStrategy = new BadmintonResult();
-      break;
-    case "soccer":
-      scoringStrategy = new SoccerResult();
-      break;
-    case "tennis":
-      scoringStrategy = new TennisResult();
-      break;
-    default:
-      throw new Error("Unsupported discipline");
-  }
-
-  const resultObserver = new Result("Match Observer", scoringStrategy);
-
   // --- Initialize Tournament ---
-  const tournament = Tournament.getInstance(
-    resultObserver,
-    "Grand Badminton Championship"
-  );
+  const tournament = Tournament.getInstance("Grand Badminton Championship");
 
   // --- Set Scoring Strategy for the Tournament ---
   // Tournament will use this type to create new observers for each match

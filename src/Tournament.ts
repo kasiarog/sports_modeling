@@ -51,23 +51,19 @@ export class Tournament {
   private scoringStrategyType: (new () => ScoringStrategy) | null = null;
   private disciplineName: string = "unknown";
 
-  private constructor(name: string = "Tournament", scoringStrategy: Result) {
+  private constructor(name: string = "Tournament") {
     this.tournamentName = name;
     this.contestants = [];
     this.managedMatches = [];
     this.contestantPanels = new Map();
     this.status = "NotStarted";
     this.nextMatchIdCounter = 1;
-    this.currentScoringStrategy = scoringStrategy;
     console.log(`Tournament "${this.tournamentName}" initialized.`);
   }
 
-  public static getInstance(
-    scoringStrategy: Result,
-    name?: string
-  ): Tournament {
+  public static getInstance(name?: string): Tournament {
     if (!Tournament.instance) {
-      Tournament.instance = new Tournament(name, scoringStrategy);
+      Tournament.instance = new Tournament(name);
     }
     if (
       name &&
@@ -273,12 +269,12 @@ export class Tournament {
       );
       return;
     }
-    if (!this.currentScoringStrategy) {
-      console.error(
-        `Tournament "${this.tournamentName}" cannot start: Scoring strategy not set. Use setScoringStrategy().`
-      );
-      return;
-    }
+    // if (!this.currentScoringStrategy) {
+    //   console.error(
+    //     `Tournament "${this.tournamentName}" cannot start: Scoring strategy not set. Use setScoringStrategy().`
+    //   );
+    //   return;
+    // }
     if (!this.currentPhase) {
       console.error(
         `"${this.tournamentName}" cannot start: No initial phase set.`

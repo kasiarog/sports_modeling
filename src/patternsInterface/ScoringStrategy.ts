@@ -7,4 +7,5 @@ export interface ScoringStrategy {
   getCurrentResult(): void;
   isMatchOver(): boolean;
   getWinnerId(contestantAId: string, contestantBId: string): string | null;
+  reset(): void;
 }
