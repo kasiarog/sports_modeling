@@ -10,6 +10,16 @@ export class TennisResult implements ScoringStrategy {
 
   private pointsMap = [0, 15, 30, 40];
 
+  constructor() {
+    this.reset();
+  }
+
+  public reset(): void {
+    this.resultEvents = [];
+    this.score = {};
+    this.matchEnded = false;
+  }
+
   update<T>(subject: ResultDependentEvent<T>): void {
     if (this.matchEnded) return;
 

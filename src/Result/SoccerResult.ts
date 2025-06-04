@@ -8,6 +8,18 @@ export class SoccerResult implements ScoringStrategy {
   private penalties: { [contestant: string]: number } = {};
   private ownGoals: { [contestant: string]: number } = {};
 
+  constructor() {
+    this.reset();
+  }
+
+  reset(): void {
+    this.resultEvents = [];
+    this.goals = {};
+    this.score = {};
+    this.penalties = {};
+    this.ownGoals = {};
+  }
+
   update<T>(subject: ResultDependentEvent<T>): void {
     this.resultEvents.push(subject);
     const contestant = subject.getContestant().getId();

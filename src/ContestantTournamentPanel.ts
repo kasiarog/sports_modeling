@@ -1,6 +1,6 @@
 import { Contestant } from "./Contestant";
 import { Match } from "./Match";
-import { Result } from "./Result/Result";
+import { Result } from "./interfaces/Result";
 
 interface PlayedMatchInfo {
   opponent: Contestant;

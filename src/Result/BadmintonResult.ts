@@ -7,6 +7,16 @@ export class BadmintonResult implements ScoringStrategy {
     {};
   private matchEnded: boolean = false;
 
+  constructor() {
+    this.reset();
+  }
+
+  public reset(): void {
+    this.resultEvents = [];
+    this.score = {};
+    this.matchEnded = false;
+  }
+
   update<T>(subject: ResultDependentEvent<T>): void {
     if (this.matchEnded) return;
 
