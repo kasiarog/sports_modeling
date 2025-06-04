@@ -59,12 +59,15 @@ export class Match {
 
       if (contestantName && opponentName) {
         console.log(
-          `${index + 1}. [${event.getDate().toLocaleString()}] ${event.getName()} - ${event.getDescription()} | Contestant: ${contestantName} vs ${opponentName}${pointInfo}`
+          `${index + 1}. [${event
+            .getDate()
+            .toLocaleString()}] ${event.getName()} - ${event.getDescription()} | Contestant: ${contestantName} vs ${opponentName}${pointInfo}`
         );
-      }
-      else {
+      } else {
         console.log(
-          `${index + 1}. [${event.getDate().toLocaleString()}] ${event.getName()} - ${event.getDescription()}`
+          `${index + 1}. [${event
+            .getDate()
+            .toLocaleString()}] ${event.getName()} - ${event.getDescription()}`
         );
       }
     });

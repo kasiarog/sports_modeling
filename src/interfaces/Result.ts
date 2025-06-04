@@ -25,7 +25,3 @@ export class Result implements Observer {
     return this.strategy.getCurrentScore();
   }
 }
-
-
-
-

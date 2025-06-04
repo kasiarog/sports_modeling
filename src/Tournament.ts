@@ -1,8 +1,9 @@
 import { Contestant } from "./Contestant";
 import { Match } from "./Match";
-import { Result } from "./Result/Result";
+import { Result } from "./interfaces/Result";
 import { ContestantTournamentPanel } from "./ContestantTournamentPanel";
 import { Phase } from "./Phase/Phase";
+import { ScoringStrategy } from "./patternsInterface/ScoringStrategy";
 
 export type TournamentStatus =
   | "NotStarted"
@@ -23,12 +24,23 @@ export interface RankingEntry {
   [key: string]: any;
 }
 
+export type MatchStatus = "Scheduled" | "Finished" | "Cancelled";
+
+export interface ManagedMatch {
+  id: string;
+  matchObject: Match; // The original Match instance
+  status: MatchStatus;
+  finalResultObserver?: Result; // Result instance for the end of the match
+}
+
 export class Tournament {
   private static instance: Tournament;
 
+  private currentScoringStrategy: Result | null = null;
   private tournamentName: string;
   private contestants: Contestant[];
-  private matches: Match[];
+
+  private managedMatches: ManagedMatch[];
   private contestantPanels: Map<string, ContestantTournamentPanel>;
   public status: TournamentStatus;
   private nextMatchIdCounter: number;
@@ -36,19 +48,26 @@ export class Tournament {
   private currentPhase: Phase | null = null;
   private phaseHistory: Phase[] = [];
 
-  private constructor(name: string = "Tournament") {
+  private scoringStrategyType: (new () => ScoringStrategy) | null = null;
+  private disciplineName: string = "unknown";
+
+  private constructor(name: string = "Tournament", scoringStrategy: Result) {
     this.tournamentName = name;
     this.contestants = [];
-    this.matches = [];
+    this.managedMatches = [];
     this.contestantPanels = new Map();
     this.status = "NotStarted";
     this.nextMatchIdCounter = 1;
-    //console.log(`Tournament "${this.tournamentName}" initialized.`);
+    this.currentScoringStrategy = scoringStrategy;
+    console.log(`Tournament "${this.tournamentName}" initialized.`);
   }
 
-  public static getInstance(name?: string): Tournament {
+  public static getInstance(
+    scoringStrategy: Result,
+    name?: string
+  ): Tournament {
     if (!Tournament.instance) {
-      Tournament.instance = new Tournament(name);
+      Tournament.instance = new Tournament(name, scoringStrategy);
     }
     if (
       name &&
@@ -61,6 +80,49 @@ export class Tournament {
     return Tournament.instance;
   }
 
+  public setScoringStrategyType(
+    strategyType: new () => ScoringStrategy,
+    disciplineName: string
+  ): void {
+    if (this.status === "NotStarted") {
+      this.scoringStrategyType = strategyType;
+      this.disciplineName = disciplineName;
+      console.log(
+        `Tournament "${this.tournamentName}" scoring strategy type set to: ${disciplineName}`
+      );
+    } else {
+      console.warn(
+        "Scoring strategy can only be set before the tournament starts or registration opens."
+      );
+    }
+  }
+
+  public getCurrentScoringStrategy(): Result {
+    if (!this.currentScoringStrategy) {
+      console.error(
+        `CRITICAL: Tournament "${this.tournamentName}" does not have a current scoring strategy set!`
+      );
+      throw new Error(
+        "Scoring strategy not set in Tournament. Use tournament.setScoringStrategy()."
+      );
+    }
+    return this.currentScoringStrategy;
+  }
+
+  public createNewMatchObserver(): Result {
+    if (!this.scoringStrategyType) {
+      throw new Error(
+        "Scoring strategy type not set in Tournament. Use tournament.setScoringStrategyType()."
+      );
+    }
+    const strategyInstance = new this.scoringStrategyType();
+    //strategyInstance.reset(); // Ensure it's fresh
+    return new Result(
+      `${this.disciplineName} Match Observer`,
+      strategyInstance
+    );
+  }
+
   public generateNewMatchId(): string {
     return `M${this.nextMatchIdCounter++}`;
   }
@@ -68,9 +130,11 @@ export class Tournament {
   public getTournamentName(): string {
     return this.tournamentName;
   }
+
   public getStatus(): TournamentStatus {
     return this.status;
   }
+
   public addContestant(c: Contestant): boolean {
     if (this.status !== "NotStarted" && this.status !== "RegistrationOpen") {
       console.warn(
@@ -79,13 +143,13 @@ export class Tournament {
       return false;
     }
 
+    // Check if contestant is already in the tournament
     if (!this.contestants.find((ct) => ct.getId() === c.getId())) {
-      // Check if contestant is already in the tournament
       this.contestants.push(c);
       this.contestantPanels.set(c.getId(), new ContestantTournamentPanel(c));
-      //   console.log(
-      //     `Contestant ${c.getTeamName()} added to "${this.tournamentName}".`
-      //   );
+      console.log(
+        `Contestant ${c.getTeamName()} added to "${this.tournamentName}".`
+      );
       return true;
     }
     console.warn(
@@ -141,17 +205,19 @@ export class Tournament {
     ) {
       if (this.phaseHistory.length > 0) {
         const previousPhase = this.phaseHistory[this.phaseHistory.length - 1];
-        contestantsForPhase = previousPhase.getAdvancingContestants();
+        contestantsForPhase = previousPhase.getAdvancingContestants(this);
       } else {
         contestantsForPhase = [...this.getAllContestants()];
       }
     } else {
-      // Re-setting up the same phase instance?
+      contestantsForPhase =
+        this.currentPhase.getAdvancingContestants(this).length > 0
+          ? this.currentPhase.getAdvancingContestants(this)
+          : [...this.getAllContestants()];
     }
 
     this.currentPhase.setupPhase(contestantsForPhase, this);
     const phaseMatches = this.currentPhase.generateMatches(this);
-
     this.addMatchesToTournamentSchedule(phaseMatches);
 
     if (phaseMatches.length === 0 && contestantsForPhase.length > 0) {
@@ -160,10 +226,36 @@ export class Tournament {
     }
   }
 
-  private addMatchesToTournamentSchedule(newMatches: Match[]): void {
-    newMatches.forEach((match) => {
-      if (!this.matches.find((m) => m.id === match.id)) {
-        this.matches.push(match);
+  private addMatchesToTournamentSchedule(newMatchObjects: Match[]): void {
+    newMatchObjects.forEach((matchObject) => {
+      // Check if a match (with same contestants) is already scheduled
+      const existing = this.managedMatches.find(
+        (mm) =>
+          mm.status === "Scheduled" &&
+          ((mm.matchObject.getContestantA().getId() ===
+            matchObject.getContestantA().getId() &&
+            mm.matchObject.getContestantB().getId() ===
+              matchObject.getContestantB().getId()) ||
+            (mm.matchObject.getContestantA().getId() ===
+              matchObject.getContestantB().getId() &&
+              mm.matchObject.getContestantB().getId() ===
+                matchObject.getContestantA().getId()))
+      );
+
+      if (!existing) {
+        const newManagedMatch: ManagedMatch = {
+          id: this.generateNewMatchId(),
+          matchObject: matchObject,
+          status: "Scheduled",
+        };
+        this.managedMatches.push(newManagedMatch);
+        console.log(
+          `Match ${newManagedMatch.id} (${matchObject
+            .getContestantA()
+            .getTeamName()} vs ${matchObject
+            .getContestantB()
+            .getTeamName()}) added to schedule.`
+        );
       }
     });
   }
@@ -178,6 +270,12 @@ export class Tournament {
     if (this.contestants.length < 1) {
       console.warn(
         `"${this.tournamentName}" cannot start with fewer than 1 contestant.`
+      );
+      return;
+    }
+    if (!this.currentScoringStrategy) {
+      console.error(
+        `Tournament "${this.tournamentName}" cannot start: Scoring strategy not set. Use setScoringStrategy().`
       );
       return;
     }
@@ -199,82 +297,107 @@ export class Tournament {
     this.setupCurrentPhase();
   }
 
-  public assignNextMatches(): Match[] {
+  public assignNextMatches(): ManagedMatch[] {
     if (this.status !== "InProgress" || !this.currentPhase) {
       return [];
     }
-    const phaseMatches = this.currentPhase.generateMatches(this);
-    this.addMatchesToTournamentSchedule(phaseMatches);
-    return phaseMatches;
+    const phaseGeneratedMatchObjects = this.currentPhase.generateMatches(this);
+    this.addMatchesToTournamentSchedule(phaseGeneratedMatchObjects);
+    // Return newly added scheduled matches
+    return this.managedMatches.filter(
+      (mm) =>
+        mm.status === "Scheduled" &&
+        phaseGeneratedMatchObjects.includes(mm.matchObject)
+    );
   }
 
-  public recordMatchResult(matchId: string, result: Result): void {
-    const match = this.matches.find((m) => m.id === matchId);
-    if (!match) {
-      console.error(`Match ${matchId} not found in "${this.tournamentName}".`);
+  public recordMatchResult(matchId: string, finalResultObserver: Result): void {
+    const managedMatch = this.managedMatches.find((mm) => mm.id === matchId);
+    if (!managedMatch) {
+      console.error(
+        `ManagedMatch ${matchId} not found in "${this.tournamentName}".`
+      );
       return;
     }
-    if (match.status === "Finished") {
+    if (managedMatch.status === "Finished") {
       console.warn(`Match ${matchId} already finished.`);
       return;
     }
-    if (match.status === "Cancelled") {
+    if (managedMatch.status === "Cancelled") {
       console.warn(`Match ${matchId} is cancelled.`);
       return;
     }
 
-    match.result = result;
-    match.status = "Finished";
+    managedMatch.status = "Finished";
+    managedMatch.finalResultObserver = finalResultObserver; // Store the observer with final state
 
-    this.getContestantPanel(match.contestantA.getId())?.logMatch(match, result);
-    this.getContestantPanel(match.contestantB.getId())?.logMatch(match, result);
+    // Log to ContestantTournamentPanel using original Match object and Result observer
+    const panelA = this.getContestantPanel(
+      managedMatch.matchObject.getContestantA().getId()
+    );
+    const panelB = this.getContestantPanel(
+      managedMatch.matchObject.getContestantB().getId()
+    );
+
+    const tempMatchForPanelLog = new Match(
+      managedMatch.matchObject.getDate(),
+      managedMatch.matchObject.getContestantA(),
+      managedMatch.matchObject.getContestantB(),
+      finalResultObserver // finalResultObserver as the observer for the Match instance
+    );
+
+    // adding all the events from the original Match object
+    managedMatch.matchObject.getEvents().forEach((event) => {
+      tempMatchForPanelLog.addEvent(event);
+    });
+    panelA?.logMatch(tempMatchForPanelLog as Match, finalResultObserver);
+    panelB?.logMatch(tempMatchForPanelLog as Match, finalResultObserver);
 
     if (this.currentPhase) {
-      this.currentPhase.processMatchResult(match, result, this);
+      // Pass the original Match object and its final Result observer to the phase
+      this.currentPhase.processMatchResult(
+        managedMatch.matchObject,
+        finalResultObserver,
+        this
+      );
       this.checkPhaseCompletionAndTransition();
     }
-
     this.updateRankingDisplay();
   }
 
   private checkPhaseCompletionAndTransition(): void {
     if (this.currentPhase && this.currentPhase.isComplete(this)) {
-      const advancingContestants = this.currentPhase.getAdvancingContestants();
+      const advancingContestants =
+        this.currentPhase.getAdvancingContestants(this);
       const nextPhaseInstance = this.currentPhase.transitionToNextPhase(this);
-
       this.currentPhase = nextPhaseInstance;
 
       if (this.currentPhase) {
         this.phaseHistory.push(this.currentPhase);
-        this.currentPhase.setupPhase(advancingContestants, this);
-        const newPhaseMatches = this.currentPhase.generateMatches(this);
-        this.addMatchesToTournamentSchedule(newPhaseMatches);
+        this.currentPhase.setupPhase(advancingContestants, this); // Setup with advancers
+        const newRawMatches = this.currentPhase.generateMatches(this); // Get raw Match objects
+        this.addMatchesToTournamentSchedule(newRawMatches); // Tournament wraps and schedules them
 
-        if (newPhaseMatches.length === 0 && advancingContestants.length > 0) {
-          this.checkPhaseCompletionAndTransition(); // Recursive check for intant completion
+        if (newRawMatches.length === 0 && advancingContestants.length > 0) {
+          this.checkPhaseCompletionAndTransition();
         } else if (
           advancingContestants.length === 0 &&
           this.currentPhase.getName()
         ) {
-          // No one advanced to this new phase
-          console.log(
-            `New phase ${this.currentPhase.getName()} has no contestants`
-          );
           this.checkPhaseCompletionAndTransition();
         }
       } else {
-        console.log(`All phases of tournament complete.`);
         this.finishTournament();
       }
     }
   }
 
-  public getMatch(matchId: string): Match | undefined {
-    return this.matches.find((m) => m.id === matchId);
+  public getManagedMatch(matchId: string): ManagedMatch | undefined {
+    return this.managedMatches.find((mm) => mm.id === matchId);
   }
 
-  public getAllMatches(): Match[] {
-    return [...this.matches];
+  public getAllManagedMatches(): ManagedMatch[] {
+    return [...this.managedMatches];
   }
 
   private updateRankingDisplay(): void {}
@@ -313,7 +436,7 @@ export class Tournament {
 
   public finishTournament(): void {
     if (this.status === "Finished") {
-      //console.log(`"${this.tournamentName}" is already finished.`);
+      console.log(`"${this.tournamentName}" is already finished.`);
       return;
     }
 
@@ -324,7 +447,7 @@ export class Tournament {
     if (this.phaseHistory.length > 0) {
       const lastCompletedPhase =
         this.phaseHistory[this.phaseHistory.length - 1];
-      const finishers = lastCompletedPhase.getAdvancingContestants();
+      const finishers = lastCompletedPhase.getAdvancingContestants(this);
       if (finishers.length > 0) {
         finalMessage += `\nTop finishers from ${lastCompletedPhase.getName()}:`;
         finishers.forEach(
@@ -337,9 +460,9 @@ export class Tournament {
     if (
       overallRanking.length > 0 &&
       (this.phaseHistory.length === 0 ||
-        this.phaseHistory[
-          this.phaseHistory.length - 1
-        ].getAdvancingContestants().length === 0)
+        this.phaseHistory[this.phaseHistory.length - 1].getAdvancingContestants(
+          this
+        ).length === 0)
     ) {
       console.log("Overall ranking based on accumulated stats:");
       overallRanking.forEach((r) =>
@@ -356,7 +479,7 @@ export class Tournament {
     console.warn(`Resetting routnament`);
     this.tournamentName = newName || "Tournament Reset";
     this.contestants = [];
-    this.matches = [];
+    this.managedMatches = [];
     this.contestantPanels.clear();
     this.status = "NotStarted";
     this.nextMatchIdCounter = 1;

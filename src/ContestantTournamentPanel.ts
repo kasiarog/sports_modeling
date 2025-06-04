@@ -3,7 +3,6 @@ import { Match } from "./Match";
 import { Result } from "./Result/Result";
 
 interface PlayedMatchInfo {
-  matchId: string;
   opponent: Contestant;
   result: Result;
   date: Date;
@@ -35,21 +34,15 @@ export class ContestantTournamentPanel {
   }
 
   public logMatch(match: Match, rawResult: Result): void {
-    if (match.status !== "Finished" || !rawResult) {
-      // console.warn(`Match ${match.id} cannot be logged: it's not finished or has no result.`);
-      return;
-    }
-
     const opponent =
-      match.contestantA.getId() === this.contestant.getId()
-        ? match.contestantB
-        : match.contestantA;
+      match.getContestantA().getId() === this.contestant.getId()
+        ? match.getContestantB()
+        : match.getContestantA();
 
     this.matchHistory.push({
-      matchId: match.id,
       opponent: opponent,
       result: rawResult,
-      date: match.scheduledTime || new Date(),
+      date: match.getDate() || new Date(),
     });
   }
 

@@ -1,7 +1,7 @@
 import { Contestant } from "../Contestant";
 import { Match } from "../Match";
 import { Tournament } from "../Tournament";
-import { Result } from "../Result/Result";
+import { Result } from "../interfaces/Result";
 
 export interface Phase {
   // Gets the name of the current phase
@@ -16,7 +16,7 @@ export interface Phase {
   //Processes a match result according to the rules of this phase and update ContestantTournamentResult
   processMatchResult(
     match: Match,
-    result: Result,
+    resultOfMatch: Result,
     tournamentContext: Tournament
   ): void;
 
@@ -27,7 +27,7 @@ export interface Phase {
   isComplete(tournamentContext: Tournament): boolean;
 
   // Gets the contestants who have qualified from this phase or who have achieved final tournament placings
-  getAdvancingContestants(): Contestant[];
+  getAdvancingContestants(tournamentContext: Tournament): Contestant[];
 
   // Determines and returns the next phase of the tournament. It can return a new Phase  or null if this is the final phase.
   transitionToNextPhase(tournamentContext: Tournament): Phase | null;
