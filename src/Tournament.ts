@@ -152,10 +152,7 @@ export class Tournament {
     this.currentPhase.setupPhase(contestantsForPhase, this);
     const phaseMatches = this.currentPhase.generateMatches(this);
 
-    this.addMatchesToTournamentSchedule(
-      phaseMatches,
-      this.currentPhase.getName()
-    );
+    this.addMatchesToTournamentSchedule(phaseMatches);
 
     if (phaseMatches.length === 0 && contestantsForPhase.length > 0) {
       // Check if phase is complete from setup

@@ -1,5 +1,5 @@
 import { Contestant } from "../Contestant";
-import { Match } from "../match";
+import { Match } from "../Match";
 import { Tournament } from "../Tournament";
 import { Result } from "../Result/Result";
 
