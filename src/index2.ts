@@ -19,70 +19,60 @@ function simulateBadmintonMatchEvents(
   console.log(
     `\n--- Simulating Badminton Events for match between ${cA.getTeamName()} and ${cB.getTeamName()} ---`
   );
-  EventFactory.createEvent(
-    matchObject,
+matchObject.createEvent(
     "Point Won",
     `${cA.getTeamName()} team wins a point`,
     cA,
     1
   );
-  EventFactory.createEvent(
-    matchObject,
+matchObject.createEvent(
     "Faul",
     `${cB.getTeamName()} team commits a faul`,
     cB
   ); // No points
-  EventFactory.createEvent(
-    matchObject,
+matchObject.createEvent(
     "Point Won",
     `${cB.getTeamName()} team wins 20 points`,
     cB,
     20
   );
-  EventFactory.createEvent(
-    matchObject,
+matchObject.createEvent(
     "Point Won",
     `${cA.getTeamName()} team wins 19 points`,
     cA,
     19
   );
   EventFactory.createEvent(matchObject, "Break", "Short break between sets"); // No points
-  EventFactory.createEvent(
-    matchObject,
+matchObject.createEvent(
     "Point Won",
     `${cB.getTeamName()} team wins a point`,
     cB,
     1
   );
-  EventFactory.createEvent(
-    matchObject,
+matchObject.createEvent(
     "Smash",
     `${cA.getTeamName()} smashes and wins a point`,
     cA,
     1
   );
-  EventFactory.createEvent(
-    matchObject,
+matchObject.createEvent(
     "Faul",
     `${cA.getTeamName()} team hits the net`,
     cA
   ); // No points
-  EventFactory.createEvent(
-    matchObject,
+matchObject.createEvent(
     "Point Won",
     `${cA.getTeamName()} wins a point`,
     cA,
     1
   );
-  EventFactory.createEvent(
-    matchObject,
+matchObject.createEvent(
     "Smash Winner",
     `${cA.getTeamName()} smashes and wins a set`,
     cA,
     1
   ); // This point wins the set
-  EventFactory.createEvent(
-    matchObject,
+matchObject.createEvent(
     "Point Won",
     `${cB.getTeamName()} wins a point`,
     cB,

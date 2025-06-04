@@ -30,8 +30,7 @@ function simulateTennisWin(
   // Each call to EventFactory for "Point Won" with 1 point will advance tennis score.
   while (!strategy.isMatchOver() && safetyCount < 200) {
     // Tennis can take many points
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Point Won",
       `${winner.getTeamName()} wins point`,
       winner,

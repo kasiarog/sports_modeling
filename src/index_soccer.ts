@@ -27,8 +27,7 @@ function simulateSoccerGame(
   strategy.reset();
 
   for (let i = 0; i < scoreA; i++) {
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Goal",
       `${cA.getTeamName()} scores`,
       cA,
@@ -36,8 +35,7 @@ function simulateSoccerGame(
     );
   }
   for (let i = 0; i < scoreB; i++) {
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Goal",
       `${cB.getTeamName()} scores`,
       cB,

@@ -2,20 +2,16 @@ import { Contestant } from "./Contestant";
 import { Event } from "./interfaces/Event";
 import { Result } from "./interfaces/Result";
 import { History } from "./History";
+import { EventFactory } from "./Event/EventFactory";
 
 export class Match {
   private date: Date;
   private contestantA: Contestant;
   private contestantB: Contestant;
   private observer: Result;
-  private matchHistory: History= new History();
+  private matchHistory: History = new History();
 
-  constructor(
-    date: Date,
-    contestantA: Contestant,
-    contestantB: Contestant,
-    observer: Result
-  ) {
+  constructor(date: Date, contestantA: Contestant, contestantB: Contestant, observer: Result) {
     this.date = date;
     this.contestantA = contestantA;
     this.contestantB = contestantB;
@@ -45,8 +41,9 @@ export class Match {
   getEvents(): Event[] {
     return this.matchHistory.getEvents();
   }
-
-  
+  createEvent(name: string, description: string, contestant?: Contestant, point?: number) {
+    EventFactory.createEvent(this, name, description, contestant, point);
+  }
 
   printScoreboard(): void {
     console.log("\n--- All Match Events ---");

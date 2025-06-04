@@ -48,70 +48,60 @@ const match = new Match(new Date(), contestantA, contestantB, resultObserver);
 
 switch (discipline) {
   case "badminton":
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Point Won",
       `${contestantA.getTeamName()} team wins a point`,
       contestantA,
       1
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Faul",
       `${contestantB.getTeamName()} team commits a faul`,
       contestantB
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Point Won",
       `${contestantB.getTeamName()} team wins 20 points`,
       contestantB,
       20
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Point Won",
       `${contestantA.getTeamName()} team wins 19 points`,
       contestantA,
       19
     );
     EventFactory.createEvent(match, "Break", "Short break between sets");
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Point Won",
       `${contestantB.getTeamName()} team wins a point`,
       contestantB,
       1
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Smash",
       `${contestantA.getTeamName()} smashes and wins a point`,
       contestantA,
       1
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Faul",
       `${contestantA.getTeamName()} team hits the net`,
       contestantA
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Point Won",
       `${contestantA.getTeamName()} wins a point`,
       contestantA,
       1
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Smash Winner",
       `${contestantA.getTeamName()} smashes and wins a set`,
       contestantA,
       1
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Point Won",
       `${contestantB.getTeamName()} wins a point`,
       contestantB,
@@ -121,43 +111,37 @@ switch (discipline) {
     break;
 
   case "soccer":
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Goal",
       `${contestantA.getTeamName()} team scores a goal`,
       contestantA,
       1
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Faul",
       `${contestantA.getTeamName()} team fauls`,
       contestantA
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Goal",
       `${contestantB.getTeamName()} team scores a goal`,
       contestantB,
       1
     );
     EventFactory.createEvent(match, "Break", "15 minutes break");
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Goal",
       `${contestantA.getTeamName()} team scores a goal`,
       contestantA,
       1
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Penalty",
       `Penalty for team ${contestantA.getTeamName()}`,
       contestantA,
       1
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Own goal",
       `Own goal for team ${contestantA.getTeamName()}`,
       contestantA,
@@ -167,43 +151,37 @@ switch (discipline) {
     break;
 
   case "tennis":
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Three points Won",
       `${contestantA.getTeamName()} team wins 3 points`,
       contestantA,
       3
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Faul",
       `${contestantA.getTeamName()} team fauls`,
       contestantA
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Point Won",
       `${contestantB.getTeamName()} team wins point`,
       contestantB,
       1
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Point Won",
       `${contestantA.getTeamName()} team wins point`,
       contestantA,
       1
     );
     EventFactory.createEvent(match, "Break", "Break lasting 2 minutes");
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Point Won",
       `${contestantA.getTeamName()} team wins point`,
       contestantA,
       1
     );
-    EventFactory.createEvent(
-      match,
+    match.createEvent(
       "Two points Won",
       `${contestantB.getTeamName()} team wins point`,
       contestantB,
