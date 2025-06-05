@@ -96,7 +96,7 @@ function runTennisTournament() {
         }
       }
       safetyBreak++;
-      tournamentStatus = tournament.getStatus(); // Update status after safety break
+      tournamentStatus = tournament.getStatus(); // Update status
       continue;
     }
 
@@ -125,9 +125,7 @@ function runTennisTournament() {
     matchCounter++;
   }
 
-  console.log(
-    `\n--- Tennis Tournament Final Status: ${tournamentStatus} ---`
-  );
+  console.log(`\n--- Tennis Tournament Final Status: ${tournamentStatus} ---`);
   tournament
     .getRanking()
     .forEach((r) =>

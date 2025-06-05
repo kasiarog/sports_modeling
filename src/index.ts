@@ -3,12 +3,9 @@ import { EventFactory } from "./Event/EventFactory";
 import { Result } from "./interfaces/Result";
 import { Match } from "./Match";
 import { Player } from "./Player";
-import { BadmintonResult } from "./Result/BadmintonResult"; // Or your path
+import { BadmintonResult } from "./Result/BadmintonResult";
 import { SoccerResult } from "./Result/SoccerResult";
 import { TennisResult } from "./Result/TennisResult";
-import { Tournament, ManagedMatch } from "./Tournament"; // Import ManagedMatch
-import { GroupPhase } from "./Phase/GroupPhase";
-import { LadderPhase } from "./Phase/LadderPhase";
 
 const playerA1 = new Player(1, "John", "Doe");
 const playerA2 = new Player(1, "Adam", "Mayer");
@@ -26,7 +23,7 @@ contestantB.addPlayer(playerB1);
 contestantB.addPlayer(playerB2);
 contestantB.addPlayer(playerB3);
 
-var discipline = "soccer"; 
+var discipline = "soccer";
 let scoringStrategy;
 
 switch (discipline) {
@@ -71,7 +68,7 @@ switch (discipline) {
       contestantA,
       19
     );
-    EventFactory.createEvent(match, "Break", "Short break between sets");
+    match.createEvent("Break", "Short break between sets");
     match.createEvent(
       "Point Won",
       `${contestantB.getTeamName()} team wins a point`,
@@ -111,17 +108,63 @@ switch (discipline) {
     break;
 
   case "soccer":
-    match.createEvent("Goal", `${contestantA.getTeamName()} team scores a goal`, contestantA, 1);
-    match.createEvent("Faul", `${contestantA.getTeamName()} team fauls`, contestantA);
-    match.createEvent("Goal", `${contestantB.getTeamName()} team scores a goal`, contestantB, 1);
+    match.createEvent(
+      "Goal",
+      `${contestantA.getTeamName()} team scores a goal`,
+      contestantA,
+      1
+    );
+    match.createEvent(
+      "Faul",
+      `${contestantA.getTeamName()} team fauls`,
+      contestantA
+    );
+    match.createEvent(
+      "Goal",
+      `${contestantB.getTeamName()} team scores a goal`,
+      contestantB,
+      1
+    );
     match.createEvent("Break", "15 minutes break");
-    match.createEvent("Goal", `${contestantA.getTeamName()} team scores a goal`, contestantA, 1);
-    match.createEvent("Penalty", `Penalty for team ${contestantA.getTeamName()}`, contestantA, 1);
-    match.createEvent("Own goal", `Own goal for team ${contestantA.getTeamName()}`, contestantA, 1);
-    match.createEvent("Yellow Card", `${contestantA.getTeamName()} player receives a yellow card`, contestantA);
-    match.createEvent("Red Card", `${contestantB.getTeamName()} player receives a red card`, contestantB);
-    match.createEvent("Goal", `${contestantA.getTeamName()} team scores another goal`, contestantA, 1);  // 4th goal for Ordinary
-    match.createEvent("Yellow Card", `${contestantB.getTeamName()} player receives a yellow card`, contestantB);
+    match.createEvent(
+      "Goal",
+      `${contestantA.getTeamName()} team scores a goal`,
+      contestantA,
+      1
+    );
+    match.createEvent(
+      "Penalty",
+      `Penalty for team ${contestantA.getTeamName()}`,
+      contestantA,
+      1
+    );
+    match.createEvent(
+      "Own goal",
+      `Own goal for team ${contestantA.getTeamName()}`,
+      contestantA,
+      1
+    );
+    match.createEvent(
+      "Yellow Card",
+      `${contestantA.getTeamName()} player receives a yellow card`,
+      contestantA
+    );
+    match.createEvent(
+      "Red Card",
+      `${contestantB.getTeamName()} player receives a red card`,
+      contestantB
+    );
+    match.createEvent(
+      "Goal",
+      `${contestantA.getTeamName()} team scores another goal`,
+      contestantA,
+      1
+    ); // 4th goal for Ordinary
+    match.createEvent(
+      "Yellow Card",
+      `${contestantB.getTeamName()} player receives a yellow card`,
+      contestantB
+    );
     match.printScoreboard();
     break;
 
