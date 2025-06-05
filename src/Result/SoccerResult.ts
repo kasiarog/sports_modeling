@@ -27,6 +27,7 @@ export class SoccerResult implements ScoringStrategy {
     const opponent = subject.getOpponent().getId();
     const point = subject.getPoint();
     const description = subject.getDescription().toLowerCase();
+    const eventName = subject.getName().toLowerCase();
 
     if (!this.score[contestant]) {
       this.goals[contestant] = 0;
@@ -41,7 +42,7 @@ export class SoccerResult implements ScoringStrategy {
     } else if (description.includes("own goal")) {
       this.ownGoals[contestant] += 1;
       this.score[opponent] += 1;
-    } else if (description.includes("gwizdek")) {
+    } else if (eventName.includes("gwizdek")) {
       this.matchEnded = true;
     } else {
       this.goals[contestant] += point;
