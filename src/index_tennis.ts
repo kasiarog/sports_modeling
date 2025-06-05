@@ -54,7 +54,7 @@ function simulateTennisMatch(
   //match.printScoreboard();
 }
 
-async function runTennisTournament() {
+function runTennisTournament() {
   console.log("--- STARTING TENNIS TOURNAMENT SIMULATION ---");
   const p1 = new Player(1, "Ignacy", "Tloczynski");
   const p2 = new Player(2, "Wladyslaw", "Skonecki");
@@ -78,8 +78,11 @@ async function runTennisTournament() {
   tournament.startTournament();
 
   let safetyBreak = 0;
-  while (tournament.getStatus() === "InProgress" && safetyBreak < 10) {
-    console.log(`\nTennis Tournament Match ${safetyBreak + 1}`);
+  let matchCounter = 0;
+  let tournamentStatus = tournament.getStatus();
+
+  while (tournamentStatus === "InProgress" && safetyBreak < 10) {
+    console.log(`\nTennis Tournament Match ${matchCounter + 1}`);
     const scheduledManagedMatches = tournament
       .getAllManagedMatches()
       .filter((mm) => mm.status === "Scheduled");
@@ -93,6 +96,7 @@ async function runTennisTournament() {
         }
       }
       safetyBreak++;
+      tournamentStatus = tournament.getStatus(); // Update status after safety break
       continue;
     }
 
@@ -115,11 +119,14 @@ async function runTennisTournament() {
         "\n--- Current Phase Standings: ---\n",
         JSON.stringify(currentPhase.getPhaseStandings(), null, 2)
       );
+
     safetyBreak++;
+    tournamentStatus = tournament.getStatus(); // Update status after match
+    matchCounter++;
   }
 
   console.log(
-    `\n--- Tennis Tournament Final Status: ${tournament.getStatus()} ---`
+    `\n--- Tennis Tournament Final Status: ${tournamentStatus} ---`
   );
   tournament
     .getRanking()
@@ -129,4 +136,5 @@ async function runTennisTournament() {
       )
     );
 }
-runTennisTournament().catch(console.error);
+
+runTennisTournament();

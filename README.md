@@ -5,6 +5,12 @@ Run index.ts
  ts-node src/index_soccer.ts
  ts-node src/index_badminton.ts
  ts-node src/index_tennis.ts
+ npx jest soccerMatch.test.ts  
+ npx jest tennisMatch.test.ts  
+ npx jest badmintonMatch.test.ts  
+  npx jest  badmintonTournament.test.ts --silent=false
+  npx jest  tennisTournament.test.ts --silent=false 
+  npx jest  soccerTournament.test.ts --silent=false   
 ```
 
 Pomysły na wzorce projektowe:
