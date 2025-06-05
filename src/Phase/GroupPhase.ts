@@ -105,12 +105,8 @@ export class GroupPhase implements Phase {
     standingA.played++;
     standingB.played++;
 
-    const strategy = (finalResultObserver as any).strategy as ScoringStrategy; // Access underlying strategy
-    // if (!strategy.isMatchOver()) {
-    //   console.warn(
-    //     `GroupPhase: Match between ${cA.getTeamName()} vs ${cB.getTeamName()} result processed, but strategy says match is not over. Score processing might be partial.`
-    //   );
-    // }
+    // Get current scoring strategy
+    const strategy = (finalResultObserver as any).strategy as ScoringStrategy;
     const winnerId = strategy.getWinnerId(cA.getId(), cB.getId());
 
     if (winnerId === cA.getId()) {

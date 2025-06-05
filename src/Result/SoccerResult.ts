@@ -7,7 +7,7 @@ export class SoccerResult implements ScoringStrategy {
   private score: { [contestant: string]: number } = {};
   private penalties: { [contestant: string]: number } = {};
   private ownGoals: { [contestant: string]: number } = {};
-    private matchEnded: boolean = false;
+  private matchEnded: boolean = false;
 
   constructor() {
     this.reset();
@@ -42,7 +42,7 @@ export class SoccerResult implements ScoringStrategy {
       this.ownGoals[contestant] += 1;
       this.score[opponent] += 1;
     } else if (description.includes("gwizdek")) {
-     this.matchEnded = true;
+      this.matchEnded = true;
     } else {
       this.goals[contestant] += point;
       this.score[contestant] += point;
@@ -75,8 +75,7 @@ export class SoccerResult implements ScoringStrategy {
   }
 
   isMatchOver(): boolean {
-     return this.matchEnded;
-
+    return this.matchEnded;
   }
 
   getWinnerId(contestantAId: string, contestantBId: string): string | null {

@@ -269,12 +269,6 @@ export class Tournament {
       );
       return;
     }
-    // if (!this.currentScoringStrategy) {
-    //   console.error(
-    //     `Tournament "${this.tournamentName}" cannot start: Scoring strategy not set. Use setScoringStrategy().`
-    //   );
-    //   return;
-    // }
     if (!this.currentPhase) {
       console.error(
         `"${this.tournamentName}" cannot start: No initial phase set.`
@@ -339,7 +333,7 @@ export class Tournament {
       managedMatch.matchObject.getDate(),
       managedMatch.matchObject.getContestantA(),
       managedMatch.matchObject.getContestantB(),
-      finalResultObserver // finalResultObserver as the observer for the Match instance
+      finalResultObserver
     );
 
     // adding all the events from the original Match object

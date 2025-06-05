@@ -122,12 +122,13 @@ async function runSoccerTournament() {
   tournament.startTournament();
 
   let matchLoopSafety = 0;
-  while (tournament.getStatus() === "InProgress" && matchLoopSafety < 10) {
+  while (tournament.getStatus() === "InProgress") {
     console.log(`\nSoccer Tournament Match ${matchLoopSafety + 1}`);
     const scheduledManagedMatches = tournament
       .getAllManagedMatches()
       .filter((mm) => mm.status === "Scheduled");
 
+    // If no matches are left, assign new matches
     if (scheduledManagedMatches.length === 0) {
       const newMatches = tournament.assignNextMatches();
       if (newMatches.length === 0) {
@@ -163,7 +164,7 @@ async function runSoccerTournament() {
       `Playing Soccer Match ID: ${matchId} - ${cA_match.getTeamName()} vs ${cB_match.getTeamName()}`
     );
 
-    // Simulate a result
+    // Simulate a game with random result
     const scoreA = Math.floor(Math.random() * 4);
     const scoreB = Math.floor(Math.random() * 4);
     simulateSoccerGame(matchObject, cA_match, cB_match, scoreA, scoreB);
