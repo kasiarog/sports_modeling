@@ -121,9 +121,9 @@ async function runSoccerTournament() {
   tournament.setInitialPhase(initialPhase);
   tournament.startTournament();
 
-  let matchLoopSafety = 0;
+  let safetyBreak = 0;
   while (tournament.getStatus() === "InProgress") {
-    console.log(`\nSoccer Tournament Match ${matchLoopSafety + 1}`);
+    console.log(`\nSoccer Tournament Match ${safetyBreak + 1}`);
     const scheduledManagedMatches = tournament
       .getAllManagedMatches()
       .filter((mm) => mm.status === "Scheduled");
@@ -135,24 +135,9 @@ async function runSoccerTournament() {
         const currentPhase = (tournament as any).currentPhase;
         if (currentPhase && currentPhase.isComplete(tournament)) {
           (tournament as any).checkPhaseCompletionAndTransition();
-        } else if (currentPhase) {
-          console.log(
-            `Soccer: Phase ${currentPhase.getName()} not complete, no new matches.`
-          );
-        }
-        if (
-          tournament.getStatus() !== "InProgress" ||
-          tournament
-            .getAllManagedMatches()
-            .filter((mm) => mm.status === "Scheduled").length === 0
-        ) {
-          console.log(
-            "Soccer: No more progression possible or tournament ended."
-          );
-          break;
         }
       }
-      matchLoopSafety++;
+      safetyBreak++;
       continue;
     }
 
@@ -160,6 +145,7 @@ async function runSoccerTournament() {
     const { matchObject, id: matchId } = currentManagedMatch;
     const cA_match = matchObject.getContestantA();
     const cB_match = matchObject.getContestantB();
+
     console.log(
       `Playing Soccer Match ID: ${matchId} - ${cA_match.getTeamName()} vs ${cB_match.getTeamName()}`
     );
@@ -168,15 +154,15 @@ async function runSoccerTournament() {
     const scoreA = Math.floor(Math.random() * 4);
     const scoreB = Math.floor(Math.random() * 4);
     simulateSoccerGame(matchObject, cA_match, cB_match, scoreA, scoreB);
-
     tournament.recordMatchResult(matchId, matchObject.getObserver());
+
     const currentPhase = (tournament as any).currentPhase;
     if (currentPhase)
       console.log(
         "Current Phase Standings:",
         JSON.stringify(currentPhase.getPhaseStandings(), null, 2)
       );
-    matchLoopSafety++;
+    safetyBreak++;
   }
 
   console.log(
@@ -189,23 +175,5 @@ async function runSoccerTournament() {
         `#${r.rank} ${r.teamName} - Pts: ${r.points}, WLD: ${r.wins}/${r.losses}/${r.draws}`
       )
     );
-  const finalPhaseHistoryS = (tournament as any).phaseHistory;
-  if (finalPhaseHistoryS.length > 0) {
-    const lastPhaseS = finalPhaseHistoryS[finalPhaseHistoryS.length - 1];
-    if (lastPhaseS) {
-      const finishersS = lastPhaseS.getAdvancingContestants();
-      if (finishersS.length > 0) {
-        console.log(
-          `Last phase (${lastPhaseS.getName()}) finishers: ${finishersS
-            .map((c: Contestant) => c.getTeamName())
-            .join(", ")}`
-        );
-      } else {
-        console.log(
-          `Last phase (${lastPhaseS.getName()}) reported no specific finishers.`
-        );
-      }
-    }
-  }
 }
 runSoccerTournament().catch(console.error);

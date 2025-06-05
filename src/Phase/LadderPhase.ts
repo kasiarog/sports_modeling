@@ -114,7 +114,7 @@ export class LadderPhase implements Phase {
     if (this.currentRoundMatchObjects.length > 0)
       this.matchesGeneratedForCurrentActiveSet = true;
 
-    // If this round had 4 participants (2 matches), the losers are semi-final losers.
+    // If this round had 4 participants, the losers are semi-final losers.
     // We can't schedule 3rd place match until these matches are played and losers identified.
     if (
       stillActive.length === 4 &&
@@ -193,8 +193,8 @@ export class LadderPhase implements Phase {
       this.ladderBrackets.get(loser.getId())!.isEliminated = true;
     }
 
-    // Check if this was a semi-final match by looking at the number of active players *before* this round's matches resolved.
-    // If currentRoundMatchObjects contains this match and had 2 matches total, it was semis.
+    // Check if this was a semi-final match by looking at the number of active players before this round's matches resolved.
+    // If currentRoundMatchObjects contains this match and had 2 matches total, it was semi.
     if (
       this.currentRoundMatchObjects.length === 2 &&
       this.currentRoundMatchObjects.includes(matchObject) &&

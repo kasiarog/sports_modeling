@@ -11,7 +11,12 @@ export class Match {
   private observer: Result;
   private matchHistory: History = new History();
 
-  constructor(date: Date, contestantA: Contestant, contestantB: Contestant, observer: Result) {
+  constructor(
+    date: Date,
+    contestantA: Contestant,
+    contestantB: Contestant,
+    observer: Result
+  ) {
     this.date = date;
     this.contestantA = contestantA;
     this.contestantB = contestantB;
@@ -41,14 +46,19 @@ export class Match {
   getEvents(): Event[] {
     return this.matchHistory.getEvents();
   }
-  createEvent(name: string, description: string, contestant?: Contestant, point?: number) {
+  createEvent(
+    name: string,
+    description: string,
+    contestant?: Contestant,
+    point?: number
+  ) {
     EventFactory.createEvent(this, name, description, contestant, point);
   }
 
   printScoreboard(): void {
-    console.log("\n--- All Match Events ---");
+    console.log("\n--- All Match Events ---\n");
     this.matchHistory.printHistory();
-    console.log("\n--- Current Score ---");
+    console.log("\n--- Current Score ---\n");
     this.observer.getCurrentResult();
   }
 }

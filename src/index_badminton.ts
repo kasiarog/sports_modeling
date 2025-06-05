@@ -6,8 +6,8 @@ import { Result } from "./interfaces/Result";
 import { BadmintonResult } from "./Result/BadmintonResult";
 import { Match } from "./Match";
 
-// Hlper for making a badminton match winner
-function declareWinnerForBadmintonMatch(
+// Hlper for simulating a badminton match
+function simulateBadmintonMatch(
   match: Match,
   winner: Contestant,
   loser: Contestant
@@ -22,7 +22,7 @@ function declareWinnerForBadmintonMatch(
   (strategy as any).score[winner.getId()] = { sets: 2, points: 0 };
   (strategy as any).score[loser.getId()] = { sets: 0, points: 0 };
   (strategy as any).matchEnded = true;
-  (strategy as any).winnerIdInternal = winner.getId(); // Set winner ID
+  (strategy as any).winnerIdInternal = winner.getId();
 }
 
 async function runBadmintonTournament() {
@@ -37,8 +37,7 @@ async function runBadmintonTournament() {
   const teamC = new Contestant("BD_C", "Legia", [p3]);
   const teamD = new Contestant("BD_D", "Chemik", [p4]);
 
-  const tournament = Tournament.getInstance("All Poland Open");
-  tournament.resetTournamentForTesting();
+  const tournament = Tournament.getInstance("Konin Open");
   tournament.setScoringStrategyType(BadmintonResult, "Badminton");
 
   tournament.openRegistration();
@@ -62,22 +61,6 @@ async function runBadmintonTournament() {
         const currentPhase = (tournament as any).currentPhase;
         if (currentPhase && currentPhase.isComplete(tournament)) {
           (tournament as any).checkPhaseCompletionAndTransition();
-        } else if (currentPhase) {
-          console.log(
-            `Badminton: Phase ${currentPhase.getName()} not complete, no new matches. Might be waiting or an issue.`
-          );
-          break;
-        }
-        if (tournament.getStatus() !== "InProgress") break;
-        if (
-          tournament
-            .getAllManagedMatches()
-            .filter((mm) => mm.status === "Scheduled").length === 0
-        ) {
-          console.log(
-            "Badminton: Still no scheduled matches. Ending simulation loop."
-          );
-          break;
         }
       }
       safetyBreak++;
@@ -88,13 +71,20 @@ async function runBadmintonTournament() {
     const { matchObject, id: matchId } = currentManagedMatch;
     const cA_match = matchObject.getContestantA();
     const cB_match = matchObject.getContestantB();
+
     console.log(
       `Playing Badminton Match ID: ${matchId} - ${cA_match.getTeamName()} vs ${cB_match.getTeamName()}`
     );
 
-    // Simulate a winner (first contestant passes wins)
-    declareWinnerForBadmintonMatch(matchObject, cA_match, cB_match);
+    simulateBadmintonMatch(matchObject, cA_match, cB_match);
     tournament.recordMatchResult(matchId, matchObject.getObserver());
+
+    const currentPhase = (tournament as any).currentPhase;
+    if (currentPhase)
+      console.log(
+        "Current Phase Standings:",
+        JSON.stringify(currentPhase.getPhaseStandings(), null, 2)
+      );
     safetyBreak++;
   }
 
@@ -103,14 +93,10 @@ async function runBadmintonTournament() {
   );
   tournament
     .getRanking()
-    .forEach((r) => console.log(`#${r.rank} ${r.teamName} - Pts: ${r.points}`));
-  const lastPhase = (tournament as any).phaseHistory.pop();
-  if (lastPhase)
-    console.log(
-      `Last phase finishers: ${lastPhase
-        .getAdvancingContestants()
-        .map((c: Contestant) => c.getTeamName())
-        .join(", ")}`
+    .forEach((r) =>
+      console.log(
+        `#${r.rank} ${r.teamName} - Pts: ${r.points}, WLD: ${r.wins}/${r.losses}/${r.draws}`
+      )
     );
 }
 
