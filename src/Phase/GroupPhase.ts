@@ -1,8 +1,8 @@
 import { Contestant } from "../Contestant";
 import { Match } from "../Match";
-import { Result } from "../interfaces/Result"; // Your Result Observer class
-import { ScoringStrategy } from "../patternsInterface/ScoringStrategy"; // For type hint
-import { Tournament, ManagedMatch } from "../Tournament"; // Import ManagedMatch
+import { Result } from "../interfaces/Result";
+import { ScoringStrategy } from "../patternsInterface/ScoringStrategy";
+import { Tournament, ManagedMatch } from "../Tournament";
 import { Phase } from "./Phase";
 import { LadderPhase } from "./LadderPhase";
 

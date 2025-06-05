@@ -162,7 +162,6 @@ export class LadderPhase implements Phase {
       console.warn(
         `LadderPhase: Match result for ${cA.getTeamName()} vs ${cB.getTeamName()} processed, but strategy indicates match is not over!`
       );
-      // This could lead to issues if not handled. Forcing it as over for phase logic.
     }
     const winnerId = strategy.getWinnerId(cA.getId(), cB.getId());
 
