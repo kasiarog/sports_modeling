@@ -76,6 +76,10 @@ export class Tournament {
     return Tournament.instance;
   }
 
+  public getCurrentPhase(): Phase | null {
+    return this.currentPhase;
+  }
+
   public setScoringStrategyType(
     strategyType: new () => ScoringStrategy,
     disciplineName: string

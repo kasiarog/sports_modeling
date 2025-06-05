@@ -15,12 +15,12 @@ function simulateTennisMatch(
     `Simulating Tennis win for: ${winner.getTeamName()} vs ${loser.getTeamName()}`
   );
   const observer = match.getObserver() as Result;
-  const strategy = (observer as any).strategy as TennisResult;
-  strategy.reset();
+  const MatchResult = (observer as any).strategy as TennisResult;
+  MatchResult.reset();
 
   // Counter preventing infinite loops
   let safetyCount = 0;
-  while (!strategy.isMatchOver() && safetyCount < 200) {
+  while (!MatchResult.isMatchOver() && safetyCount < 200) {
     match.createEvent(
       "Point Won",
       `${winner.getTeamName()} wins point`,
@@ -32,16 +32,24 @@ function simulateTennisMatch(
 
   // If match didnt finish by now input the score manually
   if (
-    !strategy.isMatchOver() ||
-    strategy.getWinnerId(winner.getId(), loser.getId()) !== winner.getId()
+    !MatchResult.isMatchOver() ||
+    MatchResult.getWinnerId(winner.getId(), loser.getId()) !== winner.getId()
   ) {
     console.warn(
       `WARN: Tennis simulation for ${winner.getTeamName()} to win might not have completed correctly.`
     );
-    (strategy as any).score[winner.getId()] = { sets: 2, games: 0, points: 0 };
-    (strategy as any).score[loser.getId()] = { sets: 0, games: 0, points: 0 };
-    (strategy as any).matchEnded = true;
-    (strategy as any).winnerIdInternal = winner.getId();
+    (MatchResult as any).score[winner.getId()] = {
+      sets: 2,
+      games: 0,
+      points: 0,
+    };
+    (MatchResult as any).score[loser.getId()] = {
+      sets: 0,
+      games: 0,
+      points: 0,
+    };
+    (MatchResult as any).matchEnded = true;
+    (MatchResult as any).winnerIdInternal = winner.getId();
   }
   //match.printScoreboard();
 }
@@ -100,10 +108,11 @@ async function runTennisTournament() {
     simulateTennisMatch(matchObject, cA_match, cB_match);
     tournament.recordMatchResult(matchId, matchObject.getObserver());
 
-    const currentPhase = (tournament as any).currentPhase;
+    // Print current phase standings
+    const currentPhase = tournament.getCurrentPhase();
     if (currentPhase)
       console.log(
-        "Current Phase Standings:",
+        "\n--- Current Phase Standings: ---\n",
         JSON.stringify(currentPhase.getPhaseStandings(), null, 2)
       );
     safetyBreak++;

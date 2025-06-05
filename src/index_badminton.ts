@@ -13,16 +13,16 @@ function simulateBadmintonMatch(
   loser: Contestant
 ) {
   const observer = match.getObserver() as Result;
-  const strategy = (observer as any).strategy as BadmintonResult;
+  const MatchResult = (observer as any).strategy as BadmintonResult;
 
   // Reset strategy to ensure clean match state
-  strategy.reset();
+  MatchResult.reset();
 
   // Simulate winner getting 2 sets
-  (strategy as any).score[winner.getId()] = { sets: 2, points: 0 };
-  (strategy as any).score[loser.getId()] = { sets: 0, points: 0 };
-  (strategy as any).matchEnded = true;
-  (strategy as any).winnerIdInternal = winner.getId();
+  (MatchResult as any).score[winner.getId()] = { sets: 2, points: 0 };
+  (MatchResult as any).score[loser.getId()] = { sets: 0, points: 0 };
+  (MatchResult as any).matchEnded = true;
+  (MatchResult as any).winnerIdInternal = winner.getId();
 }
 
 async function runBadmintonTournament() {
@@ -79,10 +79,11 @@ async function runBadmintonTournament() {
     simulateBadmintonMatch(matchObject, cA_match, cB_match);
     tournament.recordMatchResult(matchId, matchObject.getObserver());
 
-    const currentPhase = (tournament as any).currentPhase;
+    // Print current phase standings
+    const currentPhase = tournament.getCurrentPhase();
     if (currentPhase)
       console.log(
-        "Current Phase Standings:",
+        "\n--- Current Phase Standings: ---\n",
         JSON.stringify(currentPhase.getPhaseStandings(), null, 2)
       );
     safetyBreak++;
