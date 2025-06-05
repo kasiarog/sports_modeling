@@ -1,15 +1,10 @@
 import { Player } from "./Player";
 import { Contestant } from "./Contestant";
-import { Tournament, ManagedMatch } from "./Tournament";
+import { Tournament } from "./Tournament";
 import { GroupPhase } from "./Phase/GroupPhase";
-import { LadderPhase } from "./Phase/LadderPhase";
 import { Result } from "./interfaces/Result";
-import { BadmintonResult } from "./Result/BadmintonResult";
-import { SoccerResult } from "./Result/SoccerResult";
 import { TennisResult } from "./Result/TennisResult";
-import { EventFactory } from "./Event/EventFactory";
 import { Match } from "./Match";
-import { ScoringStrategy } from "./patternsInterface/ScoringStrategy";
 
 function simulateTennisWin(
   match: Match,
@@ -24,12 +19,9 @@ function simulateTennisWin(
 
   strategy.reset();
 
+  // Counter preventing infinite loops
   let safetyCount = 0;
-  // TennisResult's update takes points and internally processes games/sets.
-  // We need to call it enough times for 'winner' to win 2 sets.
-  // Each call to EventFactory for "Point Won" with 1 point will advance tennis score.
   while (!strategy.isMatchOver() && safetyCount < 200) {
-    // Tennis can take many points
     match.createEvent(
       "Point Won",
       `${winner.getTeamName()} wins point`,
@@ -56,19 +48,18 @@ function simulateTennisWin(
 }
 
 async function runTennisTournament() {
-  console.log("--- STARTING TENNIS TOURNAMENT SIMULATION (Event-Driven) ---");
-  const p1 = new Player(1, "R.", "Federer");
-  const p2 = new Player(2, "R.", "Nadal");
-  const p3 = new Player(3, "N.", "Djokovic");
-  const p4 = new Player(4, "A.", "Murray");
+  console.log("--- STARTING TENNIS TOURNAMENT SIMULATION ---");
+  const p1 = new Player(1, "Ignacy", "Tloczynski");
+  const p2 = new Player(2, "Wladyslaw", "Skonecki");
+  const p3 = new Player(3, "Mariusz", "Fystenberg");
+  const p4 = new Player(4, "Hubert", "Hurkacz");
 
-  const teamA = new Contestant("TNA", "Swiss Maestro", [p1]);
-  const teamB = new Contestant("TNB", "King of Clay", [p2]);
-  const teamC = new Contestant("TNC", "Serbinator", [p3]);
-  const teamD = new Contestant("TND", "Muzza", [p4]);
+  const teamA = new Contestant("TN_A", "Arka", [p1]);
+  const teamB = new Contestant("TN_B", "Lech", [p2]);
+  const teamC = new Contestant("TN_C", "Slask", [p3]);
+  const teamD = new Contestant("TN_D", "Arkonia", [p4]);
 
-  const tournament = Tournament.getInstance("Wimbledon");
-  tournament.resetTournamentForTesting();
+  const tournament = Tournament.getInstance("Szwarzedz Open");
   tournament.setScoringStrategyType(TennisResult, "Tennis");
 
   tournament.openRegistration();
@@ -81,7 +72,7 @@ async function runTennisTournament() {
 
   let matchLoopSafety = 0;
   while (tournament.getStatus() === "InProgress" && matchLoopSafety < 10) {
-    console.log(`\nTennis Main Loop Iteration ${matchLoopSafety + 1}`);
+    console.log(`\nTennis Tournament Match ${matchLoopSafety + 1}`);
     const scheduledManagedMatches = tournament
       .getAllManagedMatches()
       .filter((mm) => mm.status === "Scheduled");
@@ -121,7 +112,7 @@ async function runTennisTournament() {
       `Playing Tennis Match ID: ${matchId} - ${cA_match.getTeamName()} vs ${cB_match.getTeamName()}`
     );
 
-    simulateTennisWin(matchObject, cA_match, cB_match); // cA_match wins
+    simulateTennisWin(matchObject, cA_match, cB_match);
 
     tournament.recordMatchResult(matchId, matchObject.getObserver());
     const currentPhase = (tournament as any).currentPhase;

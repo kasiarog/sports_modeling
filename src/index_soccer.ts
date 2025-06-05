@@ -1,15 +1,10 @@
 import { Player } from "./Player";
 import { Contestant } from "./Contestant";
-import { Tournament, ManagedMatch } from "./Tournament";
+import { Tournament } from "./Tournament";
 import { GroupPhase } from "./Phase/GroupPhase";
-import { LadderPhase } from "./Phase/LadderPhase";
 import { Result } from "./interfaces/Result";
-import { BadmintonResult } from "./Result/BadmintonResult";
 import { SoccerResult } from "./Result/SoccerResult";
-import { TennisResult } from "./Result/TennisResult";
-import { EventFactory } from "./Event/EventFactory";
 import { Match } from "./Match";
-import { ScoringStrategy } from "./patternsInterface/ScoringStrategy";
 
 function simulateSoccerGame(
   match: Match,
@@ -27,51 +22,95 @@ function simulateSoccerGame(
   strategy.reset();
 
   for (let i = 0; i < scoreA; i++) {
-    match.createEvent(
-      "Goal",
-      `${cA.getTeamName()} scores`,
-      cA,
-      1
-    );
+    match.createEvent("Goal", `${cA.getTeamName()} scores`, cA, 1);
   }
   for (let i = 0; i < scoreB; i++) {
-    match.createEvent(
-      "Goal",
-      `${cB.getTeamName()} scores`,
-      cB,
-      1
-    );
+    match.createEvent("Goal", `${cB.getTeamName()} scores`, cB, 1);
   }
-  // SoccerResult.isMatchOver() should ideally return true after typical match duration simulation.
-  // For this simulation, we assume the events above conclude the match for scoring purposes.
-  // Manually flag if strategy doesn't do it based on limited events:
-  if (!(strategy as any).isMatchOver || !(strategy as any).isMatchOver()) {
-    // If method not there or returns false
-    (strategy as any).matchEnded = true; // HACK: Force match end for simulation
-    const currentScore = strategy.getCurrentScore().score; // Assuming structure {score: {idA:X, idB:Y}}
-    if (currentScore[cA.getId()] > currentScore[cB.getId()])
-      (strategy as any).winnerIdInternal = cA.getId();
-    else if (currentScore[cB.getId()] > currentScore[cA.getId()])
-      (strategy as any).winnerIdInternal = cB.getId();
-    else (strategy as any).winnerIdInternal = null;
+  match.createEvent("gwizdek", "Match ended by referee", cA, 0);
+  match.createEvent("gwizdek", "Match ended by referee", cB, 0);
+
+  // If match didnt end by now, assume it ended with the scores provided
+  if (!(strategy as any).isMatchOver()) {
+    (strategy as any).matchEnded = true; //Force match end
   }
-  // match.printScoreboard();
+
+  const winnerId = strategy.getWinnerId(cA.getId(), cB.getId());
+  if (winnerId === cA.getId()) {
+    console.log(`${cA.getTeamName()} wins the match!`);
+  } else if (winnerId === cB.getId()) {
+    console.log(`${cB.getTeamName()} wins the match!`);
+  } else {
+    console.log("\nThe match ended in a draw!");
+  }
+
+  match.printScoreboard();
 }
 
 async function runSoccerTournament() {
-  console.log("--- STARTING SOCCER TOURNAMENT SIMULATION (Event-Driven) ---");
-  const p1 = new Player(10, "L. Messi", "");
-  const p2 = new Player(7, "C. Ronaldo", "");
-  const p3 = new Player(11, "Neymar", "Jr.");
-  const p4 = new Player(9, "K. Mbappe", "");
+  console.log("--- STARTING SOCCER TOURNAMENT SIMULATION ---");
+  const barcelonaSquad = [
+    new Player(10, "Lionel", "Messi"),
+    new Player(1, "Marc-André", "ter Stegen"),
+    new Player(3, "Gerard", "Piqué"),
+    new Player(5, "Sergio", "Busquets"),
+    new Player(8, "Andrés", "Iniesta"),
+    new Player(6, "Xavi", "Hernandez"),
+    new Player(2, "Dani", "Alves"),
+    new Player(4, "Ronald", "Araujo"),
+    new Player(17, "Pedri", "Gonzalez"),
+    new Player(22, "Raphinha", "Belloli"),
+    new Player(9, "Robert", "Lewandowski"),
+  ];
 
-  const teamA = new Contestant("SCA", "FC Barcelona", [p1]);
-  const teamB = new Contestant("SCB", "Real Madrid", [p2]);
-  const teamC = new Contestant("SCC", "Paris SG", [p3]);
-  const teamD = new Contestant("SCD", "Man Chesthair", [p4]);
+  const madridSquad = [
+    new Player(7, "Cristiano", "Ronaldo"),
+    new Player(1, "Thibaut", "Courtois"),
+    new Player(4, "Sergio", "Ramos"),
+    new Player(8, "Toni", "Kroos"),
+    new Player(10, "Luka", "Modric"),
+    new Player(20, "Vinicius", "Junior"),
+    new Player(11, "Marco", "Asensio"),
+    new Player(14, "Casemiro", "Henrique"),
+    new Player(5, "Raphael", "Varane"),
+    new Player(6, "Nacho", "Fernandez"),
+    new Player(18, "Aurelien", "Tchouameni"),
+  ];
+
+  const psgSquad = [
+    new Player(11, "Neymar", "Junior"),
+    new Player(1, "Gianluigi", "Donnarumma"),
+    new Player(2, "Achraf", "Hakimi"),
+    new Player(5, "Marquinhos", "Correa"),
+    new Player(6, "Marco", "Verratti"),
+    new Player(7, "Ousmane", "Dembele"),
+    new Player(8, "Fabian", "Ruiz"),
+    new Player(10, "Carlos", "Soler"),
+    new Player(18, "Renato", "Sanches"),
+    new Player(19, "Lee", "Kang-in"),
+    new Player(20, "Nordi", "Mukiele"),
+  ];
+
+  const manChesthairSquad = [
+    new Player(9, "Kylian", "Mbappe"),
+    new Player(1, "David", "De Gea"),
+    new Player(3, "Harry", "Maguire"),
+    new Player(5, "Lisandro", "Martinez"),
+    new Player(6, "Paul", "Pogba"),
+    new Player(7, "Jadon", "Sancho"),
+    new Player(8, "Bruno", "Fernandes"),
+    new Player(10, "Marcus", "Rashford"),
+    new Player(11, "Anthony", "Martial"),
+    new Player(14, "Christian", "Eriksen"),
+    new Player(17, "Fred", "Rodrigues"),
+  ];
+
+  const teamA = new Contestant("SC_A", "FC Barcelona", barcelonaSquad);
+  const teamB = new Contestant("SC_B", "Real Madrid", madridSquad);
+  const teamC = new Contestant("SC_C", "Paris SG", psgSquad);
+  const teamD = new Contestant("SC_D", "Man Chesthair", manChesthairSquad);
 
   const tournament = Tournament.getInstance("Champions League");
-  tournament.resetTournamentForTesting();
   tournament.setScoringStrategyType(SoccerResult, "Soccer");
 
   tournament.openRegistration();
@@ -84,7 +123,7 @@ async function runSoccerTournament() {
 
   let matchLoopSafety = 0;
   while (tournament.getStatus() === "InProgress" && matchLoopSafety < 10) {
-    console.log(`\nSoccer Main Loop Iteration ${matchLoopSafety + 1}`);
+    console.log(`\nSoccer Tournament Match ${matchLoopSafety + 1}`);
     const scheduledManagedMatches = tournament
       .getAllManagedMatches()
       .filter((mm) => mm.status === "Scheduled");
@@ -124,9 +163,9 @@ async function runSoccerTournament() {
       `Playing Soccer Match ID: ${matchId} - ${cA_match.getTeamName()} vs ${cB_match.getTeamName()}`
     );
 
-    // Simulate a result (random for variety)
-    const scoreA = Math.floor(Math.random() * 4); // 0-3 goals
-    const scoreB = Math.floor(Math.random() * 4); // 0-3 goals
+    // Simulate a result
+    const scoreA = Math.floor(Math.random() * 4);
+    const scoreB = Math.floor(Math.random() * 4);
     simulateSoccerGame(matchObject, cA_match, cB_match, scoreA, scoreB);
 
     tournament.recordMatchResult(matchId, matchObject.getObserver());

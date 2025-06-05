@@ -1,10 +1,10 @@
-// Phase/LadderPhase.ts
 import { Contestant } from "../Contestant";
 import { Match } from "../Match";
 import { Result } from "../interfaces/Result";
 import { ScoringStrategy } from "../patternsInterface/ScoringStrategy";
 import { Tournament, ManagedMatch } from "../Tournament";
 import { Phase } from "./Phase";
+import { GroupPhase } from "./GroupPhase";
 
 interface LadderPosition {
   contestant: Contestant;
@@ -310,6 +310,6 @@ export class LadderPhase implements Phase {
   }
 
   transitionToNextPhase(tournamentContext: Tournament): Phase | null {
-    return null;
+    return null; // Final phase
   }
 }
